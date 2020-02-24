@@ -2,7 +2,7 @@
 Sweethoney is a file triaging tool.  The tool parses out the following information:
 
 * PE header information
-* Lists Functions declared and referenced
+* Lists functions declared and referenced
 * Lists exported symbols
 * Calculates file statics
 
