@@ -7,6 +7,7 @@ import hashlib
 import time
 import argparse
 import sys
+import string
 from datetime import datetime
 
 try:
@@ -52,6 +53,27 @@ def Main(filename):
     getSectionDetails(pe)
     getFileStats(pe, filename)
    
+def getSectionDetails(pe):
+    cprint("***************************************", 'blue')
+    cprint("Getting Sections...", 'blue')
+    cprint("***************************************", 'blue')
+    print("%-10s %-12s %-12s %-12s %-45s %-12s" % ("Name", "VirtAddr", "VirtSize", "RawSize", "SHA-1", "Entropy"))
+    print("-" * 120)
+    for sec in pe.sections:
+        s = "%-10s %-12s %-12s %-12s %-45s %-12f" % (''.join([c for c in str(sec.Name, 'utf-8') if c in string.printable]), 
+            hex(sec.VirtualAddress), 
+            hex(sec.Misc_VirtualSize), 
+            hex(sec.SizeOfRawData),
+            sec.get_hash_sha1(),
+            sec.get_entropy())
+        if sec.SizeOfRawData == 0 or \
+            (sec.get_entropy() > 0 and sec.get_entropy() < 1) or \
+            sec.get_entropy() > 7:
+            s += "[SUSPICIOUS]"
+        if s.endswith ("[SUSPICIOUS]"):
+            cprint(s, 'red')
+        else:
+            print(s)
 
 def getFileInfo(pe):
     ped = pe.dump_dict()
@@ -99,12 +121,6 @@ def getFileExports(pe):
     except:
         cprint("No exported symbols!", 'magenta')
 
-def getSectionDetails(pe):
-    cprint("***************************************", 'blue')
-    cprint("Getting Sections & MD5 hashes...", 'blue')
-    cprint("***************************************", 'blue')
-    for section in pe.sections:
-        print('{0} --> {1}'.format(section.Name.decode('UTF-8'), section.get_hash_md5()))
 
 def getFileStats(pe, filename):
     cprint("***************************************", 'blue')
@@ -140,3 +156,5 @@ if __name__ == '__main__':
     parser.add_argument("filename", help="The file to be inspected by the tool")
     args = parser.parse_args()
     Main(args.filename)
+
+
