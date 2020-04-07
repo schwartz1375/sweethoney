@@ -9,3 +9,6 @@ Sweethoney is a file triaging tool.  The tool parses out the following informati
 * Alerts on suspicious sections with extremely low (less than 1) & high (greater than 7) entorpy
 
 For golang binaries please look at the [Go Reverse Engineering Tool Kit](https://go-re.tk/)
+
+# How to build the Docker image
+docker build -t schwartz1375/sweathoney:latest -f ./Dockerfile .
