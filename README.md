@@ -19,7 +19,7 @@ or do
 docker pull schwartz1375/sweethoney
 ```
 
-The most basic form is run the container and use wget/curl to pull the file sample in and run sweethoney.
+The most basic form is to run the container and use wget/curl to pull the file sample in and run sweethoney.
 
 ```
 $ docker run -it --name=sweethoney schwartz1375/sweethoney
