@@ -8,7 +8,7 @@ USER root
 RUN DEBIAN_FRONTEND=noninteractive \
         apt-get -y update && apt-get -y \
         dist-upgrade && apt-get clean && apt-get install -y \
-        ca-certificates tmux vim wget curl \
+        ca-certificates tmux vim wget curl tar zip\
         build-essential libffi-dev python3 python3-dev python3-pip libfuzzy-dev 
 
 RUN pip3 install pefile python-magic termcolor ssdeep
