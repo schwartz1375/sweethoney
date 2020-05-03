@@ -18,3 +18,9 @@ or do
 ```
 docker pull schwartz1375/sweethoney
 ```
+
+The most basic form is run the container and to start the inundator from a bash prompt after a proxy has been setup
+
+```
+$ docker run -it --name=sweethoney schwartz1375/sweethoney
+```
