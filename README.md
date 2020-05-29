@@ -16,7 +16,7 @@ docker build -t schwartz1375/sweethoney:latest -f ./Dockerfile .
 or do 
 
 ```
-docker pull schwartz1375/sweethoney
+$ docker pull schwartz1375/sweethoney
 ```
 
 The most basic form is to run the container and use wget/curl to pull the file sample in and run sweethoney.
