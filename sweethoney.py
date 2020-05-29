@@ -207,7 +207,7 @@ def getFileDeclared(pe):
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
 	if len(ret8) != 0:
-		cprint("\n***************************************", 'rblueed')
+		cprint("\n***************************************", 'blue')
 		cprint("Suspicious CRYPTO alerts", 'yellow', attrs=['bold'])
 		cprint("***************************************", 'blue')
 		for x in ret8:
