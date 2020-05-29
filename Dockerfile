@@ -13,7 +13,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
 
 RUN pip3 install pefile python-magic termcolor ssdeep
 
-RUN wget https://github.com/schwartz1375/sweethoney/raw/master/sweethoney.py
+RUN wget https://raw.githubusercontent.com/schwartz1375/sweethoney/master/sweethoney.py
+
 RUN chmod +x sweethoney.py
 
 WORKDIR /root
