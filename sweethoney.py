@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)' 
-__version__ = '1.1.1' 
+__version__ = '1.1.2' 
 
 import hashlib
 import time
@@ -207,9 +207,9 @@ def getFileDeclared(pe):
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
 	if len(ret8) != 0:
-		cprint("\n***************************************", 'red')
+		cprint("\n***************************************", 'rblueed')
 		cprint("Suspicious CRYPTO alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'red')
+		cprint("***************************************", 'blue')
 		for x in ret8:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 			
