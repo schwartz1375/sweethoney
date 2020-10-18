@@ -12,11 +12,11 @@ RUN apt-get -y update && apt-get -y \
         dist-upgrade && apt-get clean && apt-get install -y \
         ca-certificates tmux vim wget curl tar zip \
         git golang\
-        build-essential libffi-dev python3 python3-dev python3-pip libfuzzy-dev 
+        build-essential libffi-dev python3 python3-dev python3-pip libfuzzy-dev  
 
-RUN pip3 install pefile python-magic termcolor ssdeep
+RUN pip3 install pefile python-magic termcolor ssdeep sslyze
 
-RUN wget https://raw.githubusercontent.com/schwartz1375/sweethoney/master/sweethoney.py
+ADD https://raw.githubusercontent.com/schwartz1375/sweethoney/master/sweethoney.py /root
 
 RUN go get -u github.com/xyproto/elfinfo
 RUN cd /root/go/src/github.com/xyproto/elfinfo/; go build ; cp elfinfo /usr/bin/elfinfo
