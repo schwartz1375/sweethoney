@@ -58,7 +58,7 @@ dlinjalerts = ['LoadLibraryA','GetProcAddress','GetWindowsThreadProcessId','SetW
 #anti vm/debugging alerts
 antialerts = ['GetTickCount','CountClipboardFormats','GetForeGroundWindow','Isdebuggerpresent','NtGlobalFlag','FindWindow','NtClose',
 			  'CloseHandle','OutputDebugString','OutputDebugStringA','OutputDebugStringW','NtQueryInformationProcess',
-			  'GetAdaptersInfo','CheckRemoteDebuggerPresent']
+			  'GetAdaptersInfo','CheckRemoteDebuggerPresent', 'GetModuleHandleA', 'CreateToolhelp32Snapshot']
 
 #keylogger
 keyalerts = ['FindWindowA','ShowWindow','GetAsyncKeyState','SetWindowsHookEx','RegisterHotKey','GetMessage','UnhookWindowsHookEx']
