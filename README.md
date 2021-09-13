@@ -28,3 +28,4 @@ $ docker run -it --name=sweethoney schwartz1375/sweethoney
 ## Additional Resources
 * [Pev Tools](https://github.com/merces/pev) (i.e. pestr, pescan, etc.)
 * [Peframe](https://github.com/merces/pev)
+* [Pestudio](https://www.winitor.com/)
