@@ -13,35 +13,35 @@ from datetime import datetime
 try:
 	import pefile
 except:
-	print('Missing pefile Python module, please check if it is installed.') #pip install pefile
+	print('Missing pefile Python module, please check if it is installed.')
 	sys.exit(1)
 try:
 	import magic
 except:
-	print('Missing magic Python module, please check if it is installed.') #pip install python-magic on mac os brew install libmagic too
+	print('Missing magic Python module, please check if it is installed.') 
 	sys.exit(1)
 try:
 	from termcolor import colored, cprint
 except:
-	print('Missing termcolor Python module, please check if it is installed.') #pip install termcolor
+	print('Missing termcolor Python module, please check if it is installed.') 
 	sys.exit(1)
 try:
 	import ssdeep
 except:
-	print('Missing ssdeep Python module, please check if it is installed.') #python3 -m pip install ssdeep
+	print('Missing ssdeep Python module, please check if it is installed.')
 	sys.exit(1)
 
 #registry alerts 
 regalerts = ['RegCreateKeyExA',' RegDeleteValueA', 'RegFlushKey', 'RegSetValueExA','RtlCreateRegistryKey','RtlWriteRegistryValue',]
 
 #network alerts 
-netalerts = ['InternetCloseHandle','InternetOpenHandle','InternetOpenA','InternetOpenURLA','InternetReadFile','FtpPutFile',
+netalerts = ['InternetCloseHandle','InternetOpenHandle','InternetOpenA', 'InternetOpen', 'InternetOpenURLA','InternetReadFile','FtpPutFile',
 			 'Accept','Bind','HttpSendRequest','InternetConnect','URLDownloadToFile']
 
-#process alerts 
+#process alerts/Code Injection/Unpacking 
 psalerts = ['CreateProcess','EnumProcesses','CreateRemoteThread','CreateService','ControlService','StartService','ReadProcessMemory',
 		   'WriteProcessMemory','OpenProcess','VirtualAllocEx','WriteProcessMemory','GetModuleHandle','GetProcAddress','LoadLibraryA',
-		   'LoadLibrary']
+		   'LoadLibrary', 'VirtualProtect']
 
 #malicious general funcitons
 sysalerts = ['AdjustTokenPrivileges','WinExec', 'ShellExecute','FindFirstFile','FindNextFile','Gethostbyname','Gethostname',
@@ -49,7 +49,7 @@ sysalerts = ['AdjustTokenPrivileges','WinExec', 'ShellExecute','FindFirstFile','
 			 'MapViewOfFile','NetScheduleJobAdd']
 
 #dropper alerts
-dropalerts = ['FindResource','LoadResource','SizeOfResource','LockResource','NtResumeThread','NtMapViewOfSection','NtCreateSection']
+dropalerts = ['FindResource', 'FindResource', 'LoadResource','SizeOfResource','LockResource','NtResumeThread','NtMapViewOfSection','NtCreateSection']
 
 #dll injection alerts
 dlinjalerts = ['LoadLibraryA','GetProcAddress','GetWindowsThreadProcessId','SetWindowsHookEx','BroadcastSystemMessage','OpenProcess',
@@ -60,8 +60,9 @@ antialerts = ['GetTickCount','CountClipboardFormats','GetForeGroundWindow','Isde
 			  'CloseHandle','OutputDebugString','OutputDebugStringA','OutputDebugStringW','NtQueryInformationProcess',
 			  'GetAdaptersInfo','CheckRemoteDebuggerPresent', 'GetModuleHandleA', 'CreateToolhelp32Snapshot']
 
-#keylogger
-keyalerts = ['FindWindowA','ShowWindow','GetAsyncKeyState','SetWindowsHookEx','RegisterHotKey','GetMessage','UnhookWindowsHookEx']
+#keylogger and Data Theft
+keyalerts = ['FindWindowA','ShowWindow','GetAsyncKeyState','SetWindowsHookEx','RegisterHotKey','GetMessage','UnhookWindowsHookEx', 'GetClipboardData',
+			 'GetWindowText']
 
 #crypto stuff
 cryptalerts = ['CryptEncrypt','CryptAcquireContext','CryptAcquireContext','CryptImportPublicKeyInfo','CryptoAPI']
