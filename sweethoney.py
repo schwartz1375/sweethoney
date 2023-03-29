@@ -1,68 +1,64 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)' 
-__version__ = '1.1.2' 
+__version__ = '1.2.0' 
 
-import hashlib
-import time
 import argparse
-import sys
+import hashlib
 import string
+import sys
 from datetime import datetime
 
-try:
-	import pefile
-except:
-	print('Missing pefile Python module, please check if it is installed.')
-	sys.exit(1)
-try:
-	import magic
-except:
-	print('Missing magic Python module, please check if it is installed.') 
-	sys.exit(1)
-try:
-	from termcolor import colored, cprint
-except:
-	print('Missing termcolor Python module, please check if it is installed.') 
-	sys.exit(1)
-try:
-	import ssdeep
-except:
-	print('Missing ssdeep Python module, please check if it is installed.')
-	sys.exit(1)
+import magic
+import pefile
+import ssdeep
+from termcolor import cprint
 
-#registry alerts 
-regalerts = ['RegCreateKeyExA',' RegDeleteValueA', 'RegFlushKey', 'RegSetValueExA','RtlCreateRegistryKey','RtlWriteRegistryValue',]
+#registry alerts; used for persistence, config data storage, cleanup, and registry management
+regalerts = ['RegCreateKeyA', 'RegCreateKeyW', 'RegCreateKeyExA','RegCreateKeyExW','RegDeleteValueA', 'RegDeleteValueW', 'RegFlushKey',
+	    	'RegCloseKey', 'RegDeleteKeyA', 'RegDeleteKeyW', 'RegDeleteKeyExA', 'RegDeleteKeyExW','RegOpenKeyA', 'RegOpenKeyW', 'RegOpenKeyExA', 
+			'RegOpenKeyExW', 'RegSetValueA', 'RegSetValueW', 'RegSetValueExA','RegSetValueExW', 'RtlCreateRegistryKey','RtlWriteRegistryValue',]
 
-#network alerts 
-netalerts = ['InternetCloseHandle','InternetOpenHandle','InternetOpenA', 'InternetOpen', 'InternetOpenURLA','InternetReadFile','FtpPutFile',
-			 'Accept','Bind','HttpSendRequest','InternetConnect','URLDownloadToFile']
+#Networking and Internet Access; used for exfiltration, and C2 
+netalerts = ['InternetCloseHandle','InternetOpenA', 'InternetOpenW', 'InternetOpenUrlA','InternetOpenUrlW', 'InternetConnectA', 'InternetConnectW', 
+	    	'HttpOpenRequestA', 'HttpOpenRequestW', 'HttpSendRequestA', 'HttpSendRequestW', 'HttpSendRequestExA', 'HttpSendRequestExW',
+			'InternetReadFile', 'InternetReadFileExA', 'InternetReadFileExW', 'InternetWriteFile', 'URLDownloadToFile',
+			'FtpPutFileA', 'FtpPutFileW', 'FtpGetFileA', 'FtpGetFileW', 'FtpDeleteFileA', 'FtpDeleteFileW', 'FtpCreateDirectoryA', 'FtpCreateDirectoryW',
+			'socket', 'connect', 'bind', 'listen', 'accept', 'send', 'recv', 'sendto', 'recvfrom', 'getaddinfo', 
+            'gethostbyname', 'gethostbyaddr', 'Gethostname','pipe', 'socketpair', 'shmget', 'shmat', 'shmdt', 'semget', 'semop']
 
-#process alerts/Code Injection/Unpacking 
-psalerts = ['CreateProcess','EnumProcesses','CreateRemoteThread','CreateService','ControlService','StartService','ReadProcessMemory',
-		   'WriteProcessMemory','OpenProcess','VirtualAllocEx','WriteProcessMemory','GetModuleHandle','GetProcAddress','LoadLibraryA',
-		   'LoadLibrary', 'VirtualProtect']
-
+#process alerts/Code Injection/Unpacking; process and memory manipulation, and DLL injection 
+psalerts = ['CreateProcessA', 'CreateProcessW', 'TerminateProcess', 'LoadLibraryA', 'LoadLibraryW', 'LoadLibraryExA', 'LoadLibraryExW',
+	    	'CreateProcess','EnumProcesses','CreateService','ControlService','StartService','ReadProcessMemory', 'OpenProcess', 
+			'VirtualFree', 'VirtualFreeEx', 'VirtualAlloc', 'VirtualAllocEx', 'GetProcAddress', 'VirtualProtect', 'VirtualProtectEx', 'LoadLibraryA',
+			'GetWindowsThreadProcessId','SetWindowsHookEx', 'BroadcastSystemMessage','WriteProcessMemory','CreateRemoteThread',
+			'fork', 'execve', 'clone', 'waitpid', 'kill', 'getpid', 'getppid', 'mprotect', 'mmap', 'munmap', 'dlopen', 'dlsym', 'dlcose']
+			
 #malicious general funcitons
-sysalerts = ['AdjustTokenPrivileges','WinExec', 'ShellExecute','FindFirstFile','FindNextFile','Gethostbyname','Gethostname',
-			 'CreateMutex','GetAsyncKeyStat','Fopen','GetEIP','malloc','GetTempPathA','ShellExecuteA','IsWoW64Process','LdrLoadDll',
-			 'MapViewOfFile','NetScheduleJobAdd']
+miscalerts = ['AdjustTokenPrivileges','WinExec', 'ShellExecute','FindFirstFile','FindNextFile',
+			'CreateMutex','GetAsyncKeyStat','Fopen','GetEIP','malloc','GetTempPathA','ShellExecuteA','IsWoW64Process','LdrLoadDll',
+			'MapViewOfFile','NetScheduleJobAdd', 'open', 'close', 'read', 'write', 'lseek', 'unlink', 'rename', 'opendir', 'readdir', 'closedir', 
+            'mkdir', 'rmdir', 'stat', 'fstat', 'chmod', 'chown']
 
-#dropper alerts
-dropalerts = ['FindResource', 'FindResource', 'LoadResource','SizeOfResource','LockResource','NtResumeThread','NtMapViewOfSection','NtCreateSection']
-
-#dll injection alerts
-dlinjalerts = ['LoadLibraryA','GetProcAddress','GetWindowsThreadProcessId','SetWindowsHookEx','BroadcastSystemMessage','OpenProcess',
-			   'OpenProcess','WriteProcessMemory','CreateRemoteThread']
+#dropper alerts, cleanup, lateral movement 
+dropalerts = ['CreateFileA', 'CreateFileW', 'ReadFile', 'ReadFileEx', 'WriteFile', 'WriteFileEx', 'DeleteFileA', 'DeleteFileW',
+	    	'CopyFile', 'CopyFileA', 'CopyFileW', 'CopyFileExA', 'CopyFileExW', 'MoveFileA', 'MoveFileW', 'FindResource', 'LoadResource',
+			'SizeOfResource','LockResource', 'NtResumeThread','NtMapViewOfSection','NtCreateSection']
 
 #anti vm/debugging alerts
 antialerts = ['GetTickCount','CountClipboardFormats','GetForeGroundWindow','Isdebuggerpresent','NtGlobalFlag','FindWindow','NtClose',
-			  'CloseHandle','OutputDebugString','OutputDebugStringA','OutputDebugStringW','NtQueryInformationProcess',
-			  'GetAdaptersInfo','CheckRemoteDebuggerPresent', 'GetModuleHandleA', 'CreateToolhelp32Snapshot']
+			'CloseHandle','OutputDebugString','OutputDebugStringA','OutputDebugStringW','NtQueryInformationProcess', 'GetAdaptersInfo',
+			'CheckRemoteDebuggerPresent', 'CreateToolhelp32Snapshot', 'GetModuleHandleA', 'GetModuleHandleW', 
+			'GetModuleHandleExA', 'GetModuleHandleExW', 'GetModuleFileNameA', 'GetModuleFileNameW']
 
 #keylogger and Data Theft
 keyalerts = ['FindWindowA','ShowWindow','GetAsyncKeyState','SetWindowsHookEx','RegisterHotKey','GetMessage','UnhookWindowsHookEx', 'GetClipboardData',
-			 'GetWindowText']
+			'GetWindowText']
+
+#System Information and miscellaneous funcations; used for reconnaissance, timestamping, and evasion
+sysinfoalerts = ['GetSystemInfo', 'GetSystemTime','GetUserNameA', 'GetUserNameW', 'GetComputerNameA', 'GetComputerNameW', 'GetVersion', 
+		  		'GetVersionExA', 'GetVersionExW', 'uname', 'sysctl', 'getuid', 'getgid', 'setuid', 'setgrid', 'geteuid', 'getegid',
+				'getpwnam','getpwuid', 'getgrnam', 'getgrid', 'getlogin', 'gethostname', 'gettimeofday', 'localtime', 'strftime']
 
 #crypto stuff
 cryptalerts = ['CryptEncrypt','CryptAcquireContext','CryptAcquireContext','CryptImportPublicKeyInfo','CryptoAPI']
@@ -73,10 +69,10 @@ def Main(filename):
 	try:
 		pe = pefile.PE(filename)
 	except pefile.PEFormatError:
-		cprint("\n***************************************", 'red')
+		cprint("\n**************************************************", 'red')
 		cprint("Aw Snap, invaild format!", 'red')
 		cprint("Manual inspection required!", 'red')
-		cprint("***************************************\n", 'red')
+		cprint("**************************************************\n", 'red')
 		sys.exit(1)
 	getFileInfo(pe)
 	getFileDeclared(pe)
@@ -85,9 +81,9 @@ def Main(filename):
 	getFileStats(pe, filename)
    
 def getSectionDetails(pe):
-	cprint("\n***************************************", 'blue')
+	cprint("\n**************************************************", 'blue')
 	cprint("Getting Sections...", 'blue')
-	cprint("***************************************\n", 'blue')
+	cprint("**************************************************\n", 'blue')
 	print("%-10s %-12s %-12s %-12s %-45s %-12s" % ("Name", "VirtAddr", "VirtSize", "RawSize", "SHA-1", "Entropy"))
 	print("-" * 120)
 	for sec in pe.sections:
@@ -108,9 +104,9 @@ def getSectionDetails(pe):
 
 def getFileInfo(pe):
 	ped = pe.dump_dict()
-	cprint("\n***************************************", 'blue')
+	cprint("\n**************************************************", 'blue')
 	cprint("Compile information:", 'blue')
-	cprint("***************************************\n", 'blue')
+	cprint("**************************************************\n", 'blue')
 	#Compile time
 	comp_time = ped['FILE_HEADER']['TimeDateStamp']['Value']
 	comp_time = comp_time.split("[")[-1].strip("]")
@@ -119,10 +115,10 @@ def getFileInfo(pe):
 	print("Compiled on {} {}".format(comp_time, timezone.strip()))
 
 def getFileDeclared(pe):
-	cprint("\n***************************************", 'blue')
+	cprint("\n**************************************************", 'blue')
 	cprint("Functions declared and referenced:", 'blue')
-	cprint("***************************************\n", 'blue')
-	ret, ret1, ret2, ret3, ret4, ret5, ret6, ret7, ret8 = ([] for i in range(9))
+	cprint("**************************************************\n", 'blue')
+	ret, ret1, ret2, ret3, ret4, ret5, ret6, ret7, ret8  = ([] for i in range(9))
 
 	for lib in pe.DIRECTORY_ENTRY_IMPORT:
 		print (str(lib.dll, 'utf-8'))
@@ -139,19 +135,19 @@ def getFileDeclared(pe):
 				for alert in psalerts:
 					if imp.name.decode('utf-8').startswith(alert):   
 						ret2.append(imp.name)
-				for alert in sysalerts:
+				for alert in miscalerts:
 					if imp.name.decode('utf-8').startswith(alert):   
 						ret3.append(imp.name)
 				for alert in dropalerts:
 					if imp.name.decode('utf-8').startswith(alert):   
 						ret4.append(imp.name)
-				for alert in dlinjalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret5.append(imp.name)
 				for alert in antialerts:
 					if imp.name.decode('utf-8').startswith(alert):   
-						ret6.append(imp.name)
+						ret5.append(imp.name)
 				for alert in keyalerts:
+					if imp.name.decode('utf-8').startswith(alert):   
+						ret6.append(imp.name)
+				for alert in sysinfoalerts:
 					if imp.name.decode('utf-8').startswith(alert):   
 						ret7.append(imp.name)
 				for alert in cryptalerts:
@@ -159,73 +155,72 @@ def getFileDeclared(pe):
 						ret8.append(imp.name)
 
 	if len(ret) != 0:
-		cprint("\n***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
 		cprint("Suspicious registry alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("**************************************************", 'blue')
 		for x in ret:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
 	if len(ret1) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious network alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious network and or IPC alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
 		for x in ret1:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
 	if len(ret2) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious process alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious process and memory manipulation", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
 		for x in ret2:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
+	if len(ret3) != 0:
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious general/miscellaneous alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
+		for x in ret3:
+			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
+
 	if len(ret4) != 0:
-		cprint("\n***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
 		cprint("Suspicious dropper alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("**************************************************", 'blue')
 		for x in ret4:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
 	if len(ret5) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious dll inject alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious anti debugger/vm alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
 		for x in ret5:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
-	if len(ret7) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious keylogger debugger/vm alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
-		for x in ret7:
-			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
-
-	if len(ret3) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious General IAT alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
-		for x in ret3:
-			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
-
-	if len(ret8) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious CRYPTO alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
-		for x in ret8:
-			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
-			
 	if len(ret6) != 0:
-		cprint("\n***************************************", 'blue')
-		cprint("Suspicious anti debugger/vm alerts", 'yellow', attrs=['bold'])
-		cprint("***************************************", 'blue')
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious keylogger debugger/vm alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
 		for x in ret6:
 			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
+	if len(ret7) != 0:
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious System information collection alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
+		for x in ret7:
+			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
 
+	if len(ret8) != 0:
+		cprint("\n**************************************************", 'blue')
+		cprint("Suspicious CRYPTO alerts", 'yellow', attrs=['bold'])
+		cprint("**************************************************", 'blue')
+		for x in ret8:
+			cprint("\t"+x.decode("utf-8"), 'yellow', attrs=['bold'])
+			
 def getFileExports(pe):
-	cprint("\n***************************************", 'blue')
+	cprint("\n**************************************************", 'blue')
 	cprint("Looking for exported sysmbols...", 'blue')
-	cprint("***************************************", 'blue')
+	cprint("**************************************************", 'blue')
 	try:
 		for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
 			#print hex(pe.OPTIONAL_HEADER.ImageBase + exp.address), exp.name, exp.ordinal
