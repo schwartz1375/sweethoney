@@ -11,7 +11,9 @@ Sweethoney is a file triaging tool.  The tool parses out the following informati
 For golang binaries please look at the [Go Reverse Engineering Tool Kit](https://go-re.tk/)
 
 ## How to build the Docker image
+```
 docker build -t schwartz1375/sweethoney:latest -f ./Dockerfile .
+```
 
 The most basic form is to run the container and use wget/curl to pull the file sample in and run sweethoney.
 
