@@ -13,12 +13,6 @@ For golang binaries please look at the [Go Reverse Engineering Tool Kit](https:/
 ## How to build the Docker image
 docker build -t schwartz1375/sweethoney:latest -f ./Dockerfile .
 
-or do 
-
-```
-$ docker pull schwartz1375/sweethoney
-```
-
 The most basic form is to run the container and use wget/curl to pull the file sample in and run sweethoney.
 
 ```
