@@ -18,9 +18,6 @@ RUN pip3 install pefile python-magic termcolor ssdeep sslyze
 
 ADD https://raw.githubusercontent.com/schwartz1375/sweethoney/master/sweethoney.py /root
 
-RUN go get -u github.com/xyproto/elfinfo
-RUN cd /root/go/src/github.com/xyproto/elfinfo/; go build ; cp elfinfo /usr/bin/elfinfo
-
 RUN chmod +x sweethoney.py
 
 WORKDIR /root
