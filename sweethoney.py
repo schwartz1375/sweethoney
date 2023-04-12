@@ -12,6 +12,7 @@ from datetime import datetime
 import magic
 import pefile
 import ssdeep
+import tlsh
 from termcolor import cprint
 
 #registry alerts; used for persistence, config data storage, cleanup, and registry management
@@ -249,7 +250,11 @@ def getFileStats(pe, filename):
 	print('SHA-256 hash: %s' % hashlib.sha256(raw).hexdigest())
 	print('SHA-512 hash: %s' % hashlib.sha512(raw).hexdigest())
 	print('Import hash (imphash): %s' % pe.get_imphash())
-	print('fuzzy hash (ssdeep): %s' % ssdeep.hash_from_file(filename))
+	print('SSDEEP fuzzy hash: %s' % ssdeep.hash_from_file(filename))
+	with open(filename, 'rb') as f:
+		file_contents = f.read()
+	print('TLSH fuzzy hash: %s' % tlsh.hash(file_contents))
+
 
 def getFileType(filename):
 	filetype = magic.from_file(filename)
