@@ -250,9 +250,10 @@ def getFileStats(pe, filename):
 	print('SHA-256 hash: %s' % hashlib.sha256(raw).hexdigest())
 	print('SHA-512 hash: %s' % hashlib.sha512(raw).hexdigest())
 	print('Import hash (imphash): %s' % pe.get_imphash())
-	print('SSDEEP fuzzy hash: %s' % ssdeep.hash_from_file(filename))
+	# print('SSDEEP fuzzy hash: %s' % ssdeep.hash_from_file(filename))
 	with open(filename, 'rb') as f:
 		file_contents = f.read()
+	print('SSDEEP fuzzy hash: %s' % ssdeep.hash(file_contents))
 	print('TLSH fuzzy hash: %s' % tlsh.hash(file_contents))
 
 
