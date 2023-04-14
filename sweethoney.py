@@ -120,41 +120,44 @@ def getFileDeclared(pe):
 	cprint("Functions declared and referenced:", 'blue')
 	cprint("**************************************************\n", 'blue')
 	ret, ret1, ret2, ret3, ret4, ret5, ret6, ret7, ret8  = ([] for i in range(9))
-
-	for lib in pe.DIRECTORY_ENTRY_IMPORT:
-		print (str(lib.dll, 'utf-8'))
-		for imp in lib.imports:
-			if imp.name != None:
-				print ('\t' + str(imp.name, 'utf-8'))
-			if (imp.name != None) and (imp.name != ""):  
-				for alert in regalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret.append(imp.name)
-				for alert in netalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret1.append(imp.name)
-				for alert in psalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret2.append(imp.name)
-				for alert in miscalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret3.append(imp.name)
-				for alert in dropalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret4.append(imp.name)
-				for alert in antialerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret5.append(imp.name)
-				for alert in keyalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret6.append(imp.name)
-				for alert in sysinfoalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret7.append(imp.name)
-				for alert in cryptalerts:
-					if imp.name.decode('utf-8').startswith(alert):   
-						ret8.append(imp.name)
-
+	try:
+		for lib in pe.DIRECTORY_ENTRY_IMPORT:
+			print (str(lib.dll, 'utf-8'))
+			for imp in lib.imports:
+				if imp.name != None:
+					print ('\t' + str(imp.name, 'utf-8'))
+				if (imp.name != None) and (imp.name != ""):  
+					for alert in regalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret.append(imp.name)
+					for alert in netalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret1.append(imp.name)
+					for alert in psalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret2.append(imp.name)
+					for alert in miscalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret3.append(imp.name)
+					for alert in dropalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret4.append(imp.name)
+					for alert in antialerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret5.append(imp.name)
+					for alert in keyalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret6.append(imp.name)
+					for alert in sysinfoalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret7.append(imp.name)
+					for alert in cryptalerts:
+						if imp.name.decode('utf-8').startswith(alert):   
+							ret8.append(imp.name)
+	except AttributeError:
+		print("The PE object does not have the DIRECTORY_ENTRY_IMPORT attribute.")
+		# handle the error gracefully
+	
 	if len(ret) != 0:
 		cprint("\n**************************************************", 'blue')
 		cprint("Suspicious registry alerts", 'yellow', attrs=['bold'])
