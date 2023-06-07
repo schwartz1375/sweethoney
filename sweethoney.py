@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)' 
-__version__ = '1.3.0' 
+__version__ = '1.3.5' 
 
 import argparse
 import hashlib
@@ -237,11 +237,11 @@ def check_security_features(pe):
 	cprint("\n**************************************************", 'blue')
 	cprint("Checking Security Features...", 'blue')
 	cprint("**************************************************\n", 'blue')
-	print("DEP/NX: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0010))  # NX compatibility
-	print("ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0040))  # ASLR
-	print("High Entropy ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0020))  # High entropy ASLR
-	print("SAFESEH: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0400))  # SAFESEH
-	print("CFG: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x4000))  # CFG
+	print("NX: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & pefile.DLL_CHARACTERISTICS["IMAGE_DLLCHARACTERISTICS_NX_COMPAT"]))
+	print("ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & pefile.DLL_CHARACTERISTICS["IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE"]))
+	print("High Entropy ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & pefile.DLL_CHARACTERISTICS["IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA"]))
+	print("SAFESEH: ", bool(pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG"]].VirtualAddress != 0 and pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG"]].Size != 0))
+	print("CFG: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & pefile.DLL_CHARACTERISTICS["IMAGE_DLLCHARACTERISTICS_GUARD_CF"]))
 
 def getFileStats(pe, filename):
 	cprint("\n***************************************", 'blue')
