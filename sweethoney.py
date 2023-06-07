@@ -65,8 +65,6 @@ sysinfoalerts = ['GetSystemInfo', 'GetSystemTime','GetUserNameA', 'GetUserNameW'
 cryptalerts = ['CryptEncrypt','CryptAcquireContext','CryptAcquireContext','CryptImportPublicKeyInfo','CryptoAPI']
 
 def Main(filename):
-	print("PE check for '%s':" % filename)
-	getFileType(filename)
 	try:
 		pe = pefile.PE(filename)
 	except pefile.PEFormatError:
@@ -75,10 +73,13 @@ def Main(filename):
 		cprint("Manual inspection required!", 'red')
 		cprint("**************************************************\n", 'red')
 		sys.exit(1)
+	print("PE check for '%s':" % filename)
+	getFileType(filename)
 	getFileInfo(pe)
 	getFileDeclared(pe)
 	getFileExports(pe)
 	getSectionDetails(pe)
+	check_security_features(pe)
 	getFileStats(pe, filename)
    
 def getSectionDetails(pe):
@@ -232,6 +233,15 @@ def getFileExports(pe):
 	except:
 		cprint("No exported symbols!", 'magenta')
 
+def check_security_features(pe):
+	cprint("\n**************************************************", 'blue')
+	cprint("Checking Security Features...", 'blue')
+	cprint("**************************************************\n", 'blue')
+	print("DEP/NX: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0010))  # NX compatibility
+	print("ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0040))  # ASLR
+	print("High Entropy ASLR: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0020))  # High entropy ASLR
+	print("SAFESEH: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x0400))  # SAFESEH
+	print("CFG: ", bool(pe.OPTIONAL_HEADER.DllCharacteristics & 0x4000))  # CFG
 
 def getFileStats(pe, filename):
 	cprint("\n***************************************", 'blue')
