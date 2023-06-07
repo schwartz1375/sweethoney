@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)' 
-__version__ = '1.2.0' 
+__version__ = '1.3.0' 
 
 import argparse
 import hashlib
