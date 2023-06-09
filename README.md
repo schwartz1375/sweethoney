@@ -16,10 +16,8 @@ Use the command below to install the packages according to the configuration fil
 $ pip install -r requirements.txt
 ```
 
-
 ## Additional Resources
 * [readpe - PE Utils](https://github.com/mentebinaria/readpe)
-* [Peframe](https://github.com/merces/pev)
 * [Pestudio](https://www.winitor.com/)
 * [Go Reverse Engineering Tool Kit](https://go-re.tk/)
 
