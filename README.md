@@ -18,7 +18,7 @@ $ pip install -r requirements.txt
 
 
 ## Additional Resources
-* [Pev Tools](https://github.com/merces/pev) (i.e. pestr, pescan, etc.)
+* [readpe - PE Utils](https://github.com/mentebinaria/readpe)
 * [Peframe](https://github.com/merces/pev)
 * [Pestudio](https://www.winitor.com/)
 * [Go Reverse Engineering Tool Kit](https://go-re.tk/)
