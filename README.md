@@ -54,5 +54,6 @@ $ pip install -r requirements.txt
 * [readpe - PE Utils](https://github.com/mentebinaria/readpe)
 * [Pestudio](https://www.winitor.com/)
 * [XORSearch](https://blog.didierstevens.com/programs/xorsearch/)
+* [Detect-It-Easy](https://github.com/horsicq/Detect-It-Easy)
 * [Go Reverse Engineering Tool Kit](https://go-re.tk/)
 
