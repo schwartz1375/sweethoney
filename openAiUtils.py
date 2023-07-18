@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375)'
-__version__ = '3.2'
+__version__ = '3.3'
 
 import asyncio
 import datetime
@@ -67,7 +67,7 @@ def getOpenAiResults(pe):
         if gptable:
             # Pretty print the table with the result
             tabres = PrettyTable(
-                ["Libraries", "API", "GPT/SQLite Cache Verdict"], align='l', max_width=40)
+                ["Libraries", "API", "GPT/SQLite Cache Verdict"], align='l', max_width=60)
             for (dll_name, imp_name, gptverdict, _) in gptable:
                 tabres.add_row([dll_name, imp_name, gptverdict])
             result = tabres
