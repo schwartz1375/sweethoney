@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)'
-__version__ = '3.0'
+__version__ = '3.8'
 
 import argparse
 import hashlib
@@ -16,10 +16,11 @@ import pefile
 import ssdeep
 import tlsh
 from scipy.stats import chisquare
-from termcolor import cprint
+from termcolor import colored, cprint
 
 import fileUtils
 import openAiUtils
+import packerUtils
 
 # registry alerts; used for persistence, config data storage, cleanup, and registry management
 regalerts = ['RegCreateKeyA', 'RegCreateKeyW', 'RegCreateKeyExA', 'RegCreateKeyExW', 'RegDeleteValueA', 'RegDeleteValueW', 'RegFlushKey',
@@ -73,17 +74,19 @@ cryptalerts = ['CryptEncrypt', 'CryptAcquireContext',
 
 
 def Main(file):
+    diec_path=None
+
+    print("Interrogating file: '%s'" % file)
     try:
         pe = pefile.PE(file)
-    except pefile.PEFormatError:
-        cprint("\n**************************************************", 'red')
-        cprint("Aw Snap, invalid format!", 'red')
-        cprint("Manual inspection required!", 'red')
-        cprint("**************************************************\n", 'red')
+    except pefile.PEFormatError as e:
+        cprint('Aw Snap!  PEFormatError: ' + str(e), 'red')
         sys.exit(1)
-    print("PE check for '%s':" % file)
+    except:
+        cprint('Something went wrong loading the file with pefile!', 'red')
+        sys.exit(1)
     file_size = os.path.getsize(file)
-    getFileInfo(pe, file)
+    getFileInfo(pe, file, diec_path)
     getCompileInfo(pe)
     getSecurityFeatures(pe)
     getFileDeclared(pe)
@@ -334,22 +337,41 @@ def getFileStats(pe, file):
     print('TLSH fuzzy hash: %s' % tlsh.hash(file_contents))
 
 
-def getFileInfo(pe, file):
-    filetype = magic.from_file(file)
+def getFileInfo(pe, file, diec_path):
     cprint("\n**************************************************", 'blue')
     cprint("Getting file information...", 'blue')
-    cprint("\n**************************************************", 'blue')
-    cprint('Magic Type: %s' % filetype, 'green')
+    cprint("**************************************************", 'blue')
+    print(colored('File name: ', 'green') + '%s' % os.path.basename(file))
+    print(colored('Magic Type: ', 'green') + '%s' % magic.from_file(file))
+
+    # Detect-It-Easy (diec)
+    if diec_path != None:
+        ret = packerUtils.get_packer_info(file, diec_path)
+        if ret is not None:
+            print(colored("Detect-It-Easy (diec): ", "green") + str(ret))
+    else:
+        cprint('Path to diec is not set in main!', 'yellow')
 
     # Check if the file is an executable image
-    cprint('Executable Image: %s' % pe.is_exe(), 'green')
+    print(colored('Executable Image: ', 'green') + '%s' % pe.is_exe())
 
-    # Check if the file is a DLL
-    cprint('DLL: %s' % pe.FILE_HEADER.IMAGE_FILE_DLL, 'green')
+    # Check if the file is a DLL using 2 methods
+    is_dll_method_1 = pe.is_dll()
+    is_dll_method_2 = pe.FILE_HEADER.IMAGE_FILE_DLL
+
+    # If both methods agree, print the result
+    if is_dll_method_1 == is_dll_method_2:
+        print(colored('DLL: ', 'green') + '%s' % is_dll_method_1)
+
+    # If the methods disagree, print a warning
+    elif is_dll_method_1 != is_dll_method_2:
+        print(colored('Warning: DLL check methods returned different results!', 'red'))
+        # Print the results
+        print(colored('Method 1 - pe.is_dll(): ', 'red') + '%s' % is_dll_method_1)
+        print(colored('Method 2 - pe.FILE_HEADER.IMAGE_FILE_DLL: ', 'red') + '%s' % is_dll_method_2)
 
     # Check other file properties
-    cprint('Driver: %s' % pe.is_driver(), 'green')
-    cprint('Syscall DLL: %s' % pe.is_dll(), 'green')
+    print(colored('Driver: ', 'green') + '%s' % pe.is_driver())
 
 
 if __name__ == '__main__':
