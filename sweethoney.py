@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)'
-__version__ = '3.8'
+__version__ = '3.9'
 
 import argparse
 import hashlib
@@ -20,6 +20,7 @@ from termcolor import colored, cprint
 
 import fileUtils
 import openAiUtils
+import ollamaUtils
 import packerUtils
 
 # registry alerts; used for persistence, config data storage, cleanup, and registry management
@@ -74,7 +75,7 @@ cryptalerts = ['CryptEncrypt', 'CryptAcquireContext',
 
 
 def Main(file):
-    diec_path=None
+    diec_path="/Applications/DiE.app/Contents/MacOS/diec"
 
     print("Interrogating file: '%s'" % file)
     try:
@@ -94,9 +95,8 @@ def Main(file):
     getSectionDetails(pe, file_size)
     getFileStats(pe, file)
     fileUtils.analyzePeFile(file)
-    ret = openAiUtils.getOpenAiResults(pe)
-    print(ret)
-
+    #print(openAiUtils.getOpenAiResults(pe))
+    print(ollamaUtils.getOpenAiResults(pe))
 
 def getSectionDetails(pe, file_size):
     cprint("\n**************************************************", 'blue')
