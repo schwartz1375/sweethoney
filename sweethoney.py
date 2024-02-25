@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375) & Santry (@san4n6)'
-__version__ = '3.9'
+__version__ = '3.9.5'
 
 import argparse
 import hashlib
@@ -95,7 +95,10 @@ def Main(file):
     getSectionDetails(pe, file_size)
     getFileStats(pe, file)
     fileUtils.analyzePeFile(file)
-    #print(openAiUtils.getOpenAiResults(pe))
+    # To use OpenAI, uncomment the following line and ensure the corresponding utility functions and configurations are set up in openAiUtils.py:
+    # print(openAiUtils.getOpenAiResults(pe))
+
+    # To use Ollama with the Gemma model (ensure the model configuration is set in ollamaUtils.py), uncomment the following line:
     print(ollamaUtils.getOpenAiResults(pe))
 
 def getSectionDetails(pe, file_size):

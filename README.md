@@ -4,12 +4,18 @@
 Sweethoney is a highly efficient Python application designed to facilitate automated file analysis. The application is developed by Matthew Schwartz, highly skilled cybersecurity specialists. It is proficient in performing comprehensive analyses of executable files, leveraging a vast array of alert categories to identify any potential suspicious behaviors.
 
 ## Delivering Impact and Efficiency
-Sweethoney presents numerous advantages and drives substantial efficiency gains for users:
-* Automation: The application streamlines and automates malware analysis, saving significant manual effort and time.
-* Deep-Dive Analysis: By delving into the PE structure and alert-based detection, it unearths malicious indicators that might not be visible at a surface-level examination.
-* Broad Spectrum Analysis: With its comprehensive array of alert categories, Sweethoney provides a broad spectrum analysis, thereby enhancing the detection capabilities.
-* Rapid Response: The application's automated detection facilitates quicker identification of potential threats, enabling prompt and effective responses.
-* Sweethoney offers a comprehensive, efficient, and financially transparent solution for querying the functionality and security implications of multiple APIs, potentially unearthing unknown security vulnerabilities. It excels in large-scale analyses due to its asynchronous operation, allowing it to handle multiple requests simultaneously and reduce processing time. It further boosts efficiency and cost-effectiveness by caching previous responses in a SQLite database to avoid unnecessary duplicate requests. The application also employs a robust rate limit handling mechanism through an exponential backoff strategy for uninterrupted operation. Importantly, its cost estimation feature empowers users with financial control, providing an estimation of potential charges prior to initiating requests.
+Sweethoney offers significant advantages, driving efficiency gains and impactful results for users by leveraging advanced AI platforms like Ollama and OpenAI:
+
+* Flexibility in AI Platform Choice: Users have the flexibility to choose between the locally hosted Ollama platform and the cloud-based OpenAI services for querying API functionalities and assessing security implications. This choice allows users to leverage the strengths of each platform according to their specific needs. 
+* Automation: The application streamlines the malware analysis process, significantly reducing manual effort and time. It automates the detection of malicious indicators within PE files, facilitating a more efficient analysis workflow.
+* Comprehensive Analysis: Sweethoney delves deep into PE structures and employs a wide range of alert categories, enabling it to uncover malicious behaviors that might be overlooked in surface-level examinations.
+* Rapid Threat Identification: Automated detection capabilities allow for quicker identification of potential threats, enabling timely and effective responses.
+* Efficiency and Cost-Effectiveness: The application's asynchronous (OpenAI only, Ollama synchronous) is currently operation allows for handling multiple requests simultaneously, reducing processing time. It further enhances efficiency and cost management by caching previous responses in a SQLite database to avoid redundant queries. A robust rate limit handling mechanism, employing an exponential backoff strategy, ensures uninterrupted operation.
+* Financial Transparency and Control: Sweethoney includes a cost estimation feature, providing users with an upfront estimation of potential charges before initiating requests. This empowers users to make informed decisions and maintain financial control over their analyses.
+
+Sweethoney stands out as a comprehensive, efficient, and adaptable tool for static file analysis. By providing the option to utilize the analytical strengths of either Ollama or OpenAI, it equips users with powerful insights into the security implications of APIs and potential vulnerabilities, enhancing cybersecurity efforts with precision and scalability.
+
+Note: While Ollama provides the advantage of local hosting, which can enhance data privacy and reduce reliance on external internet connections, its performance may vary based on the local hardware setup. In contrast, OpenAI's cloud-based services offer scalability and potentially faster response times, depending on network conditions and server load, but may involve considerations around data privacy and internet connectivity.
 
 ## Key Features and Capabilities
 * In-depth PE Analysis: Sweethoney uses the Python library pefile for parsing and editing PE (Portable Executable) files. This allows the application to delve into intricate details of the file structure and functionality, from section details, declared functions, to exported symbols and security features.
@@ -48,6 +54,23 @@ Use the command below to install the packages according to the configuration fil
 ```
 $ pip install -r requirements.txt
 ```
+
+### Choosing Between Ollama and OpenAI
+To clarify and tidy up the instructions for choosing between the Ollama platform or OpenAI within your Python script, consider the following revised version:
+Choosing Between Ollama and OpenAI
+
+To decide whether to use Ollama or OpenAI in your project, adjust the relevant lines in the sweethoney.py script. This configuration determines which platform and model your script will utilize for processing. The model settings for Ollama can be found and adjusted within ollamaUtils.py.
+Example Configuration
+
+Below is an example demonstrating how to select the Ollama platform with the Gemma model. To switch between Ollama and OpenAI, comment out one of the lines and uncomment the other in sweethoney.py as shown:
+
+#### Instructions
+
+1. OpenAI Configuration: If you prefer to use OpenAI, ensure that openAiUtils.py contains the necessary setup, including API keys and model selection. Uncomment the line that calls openAiUtils.getOpenAiResults(pe).
+
+2. Ollama Configuration: For using Ollama, make sure ollamaUtils.py is configured with the desired model (e.g., Gemma) and any other required settings. Uncomment the line that calls ollamaUtils.getOpenAiResults(pe).
+
+By following these instructions, you can easily switch between using the Ollama platform or OpenAI for your project's needs.
 
 ## Additional Resources
 * [FLARE Obfuscated String Solver](https://github.com/mandiant/flare-floss)
