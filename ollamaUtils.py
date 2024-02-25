@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 __author__ = 'Matthew Schwartz (@schwartz1375)'
-__version__ = '1.8'
+__version__ = '1.9'
 
 import asyncio
 import datetime
