@@ -59,10 +59,9 @@ $ pip install -r requirements.txt
 To clarify and tidy up the instructions for choosing between the Ollama platform or OpenAI within your Python script, consider the following revised version:
 Choosing Between Ollama and OpenAI
 
-To decide whether to use Ollama or OpenAI in your project, adjust the relevant lines in the sweethoney.py script. This configuration determines which platform and model your script will utilize for processing. The model settings for Ollama can be found and adjusted within ollamaUtils.py.
-Example Configuration
+To decide whether to use Ollama or OpenAI in your project, adjust the relevant lines in the sweethoney.py script. This configuration determines which platform and model your script will utilize for processing. The model settings for Ollama can be found and adjusted within `ollamaUtils.py`.
 
-Below is an example demonstrating how to select the Ollama platform with the Gemma model. To switch between Ollama and OpenAI, comment out one of the lines and uncomment the other in sweethoney.py as shown:
+Below is an example demonstrating how to select the Ollama platform with the Gemma model. To switch between Ollama and OpenAI, comment out one of the lines and uncomment the other in `sweethoney.py` as shown:
 
 #### Instructions
 
