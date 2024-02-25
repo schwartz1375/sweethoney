@@ -1,0 +1,20 @@
+# .gitignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# dotenv
+.env/
+.DS_Store
+
+# Local Folders
+Misc/
+Documentation/
+
+# SQLite DB
+openai_cache*.db
+
+# API Key
+apikey.txt
