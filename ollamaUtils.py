@@ -36,7 +36,7 @@ def getOpenAiResults(pe):
         else:
             result = "No data to display."
     except Exception as e:
-        result = "An error occurred: {e}"
+        result = f"An error occurred: {e}"
     return result
 
 def extract_iat(pe):
@@ -55,7 +55,7 @@ async def request_openai(iat):
     timeout = aiohttp.ClientTimeout(total=60)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         tasks = []
-        BATCH_SIZE = 10
+        BATCH_SIZE = 20
         iat_items = list(iat.items())
         for i in range(0, len(iat_items), BATCH_SIZE):
             batch = iat_items[i:i+BATCH_SIZE]
@@ -98,7 +98,7 @@ async def get_response_from_openai(imp_name, dll_name, session):
                             {"role": "system", "content": "You are an intelligent assistant with deep understanding of APIs and security techniques."},
                             {"role": "user", "content": prompt}
                         ],
-                        "max_tokens": 2500,
+                        "max_tokens": 2000,
                         "temperature": 0.6,
                         "top_p": 1
                     },
