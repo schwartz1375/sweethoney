@@ -68,7 +68,7 @@ Below is an example demonstrating how to select the Ollama platform with the Gem
 
 1. OpenAI Configuration: If you prefer to use OpenAI, ensure that openAiUtils.py contains the necessary setup, including API keys and model selection. Uncomment the line that calls `openAiUtils.getOpenAiResults(pe)`.
 
-2. Ollama Configuration: For using Ollama, make sure ollamaUtils.py is configured with the desired model (e.g., Gemma) and any other required settings. Uncomment the line that calls `ollamaUtils.getOpenAiResults(pe)`.
+2. Ollama Configuration: For using Ollama, make sure `ollamaUtils.py` is configured with the desired model (e.g., Gemma) and any other required settings. Uncomment the line that calls `ollamaUtils.getOpenAiResults(pe)`.
 
 By following these instructions, you can easily switch between using the Ollama platform or OpenAI for your project's needs.
 
